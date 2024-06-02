@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Shopping Cart</h1>
+            <p class="lead fw-normal text-white-50 mb-0">View Your Cart..</p>
+        </div>
+    </div>
+</header>
+<br><br>
+<div class="container my-2">
+    <div class="position-fixed top-0 start-50 translate-middle-x fixed-top col-md-8 alert alert-success alert-dismissible fade in show my-4" role="alert" id="myAlert" style="display:none">Your Card Has Been Updated Successfully!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+<!-- Section-->
+<br><br>
+{% if products %}
+{% for product in products %}
+<section class="py-3">
+        <div class="container col-md-8">
+            <div class="card mb-3">
+                <div class="row g-0">
+                  <div class="col-md-4">
+                    <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="...">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body my-4">
+                        <center>
+                            <h3 class="card-title my-2">{{ product.name }}</h3>
+                            <p class="card-text mx-5 px-5">{{ product.description }}</p>
+                            {% if product.is_sale %}
+                            <!-- Sale star -->
+                            <h5>
+                            <div class="d-flex justify-content-center text-warning mb-2">
+                                <div class="bi-star-fill"></div>&nbsp;NOW ON SALE&nbsp;&nbsp;<div class="bi-star-fill"></div>
+                            </div>
+                        </h5>
+                                    
+                        <!-- Product price-->
+                            <h5 class="text-danger my-2"><strike>${{ product.price }}</strike></h5>
+                            <h3 class="text-danger my-2">${{ product.sale_price }}</h3>
+                            {% else %}
+                            <h4 class="my-4">${{ product.price }}</h4>
+                            {% endif %}
+
+                            <div class="container row justify-content-center col-md-12 col-4">
+                                <div class="col-md-2 my-2">Quantity:</div>
+                                <div class="col-md-2">
+                                    <select class="form-select form-select-sm my-2" id="select{{ product.id }}" aria-label="Default select example">
+                                    
+                                    {% for key, value in quantities.items %}
+                                        {% if key == product.id|slugify %}
+                                            <option selected>{{ value }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                      </select>
+                                </div>
+                            </div>
+                        </center>
+                      <div class="text-center mt-2">
+                        <a class="btn btn-secondary mt-auto" href="{% url 'home' %}">Home</a>
+                        <button class="btn btn-outline-dark mt-auto update-cart" type="button" data-index="{{ product.id }}" >Update</button>
+                        <button class="btn btn-danger mt-auto delete-product" type="button" data-index="{{ product.id }}" >Remove</button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+              </div>
+        </div>
+    </section>
+{% endfor %}
+
+<br><br>
+<div class="container col-md-8">
+    <h3>Total: $ {{ totals }}</h3>
+</div>
+<br><br><br>
+
+{% else %}
+    <br><br><br><br>
+    <center>
+        <h2>Currently There Is Nothing In Your Cart..</h2>
+        <br><br>
+        <div class="text-center my-4">
+            <a class="btn btn-secondary mt-auto" href="{% url 'home' %}">Go Shopping</a>
+        </div>
+    </center>
+    <br><br><br><br><br><br>
+{% endif %}
+
+<script>
+$(document).on("click", ".update-cart", function(e){
+    e.preventDefault();
+
+    var productId = $(this).data("index");
+
+    $.ajax({
+        type: "POST",
+        url: "{% url 'cart_update' %}",
+        data: {
+            product_id: productId,
+            product_quantity: $('#select' + productId + ' option:selected').text(),
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            action: "post"
+        },
+
+        success: function(json){
+            $("#myAlert").show();
+            setTimeout(function(){
+            },500);
+            setTimeout(function() { 
+                $("#myAlert").fadeOut(); }, 1000);
+            setTimeout(function(){
+                location.reload();
+            }, 500);
+            },
+
+        error: function(xhr, errmsg, err){
+
+        }
+    });
+})
+
+
+$(document).on("click", ".delete-product", function(e){
+    e.preventDefault();
+
+    $.ajax({
+        type: "POST",
+        url: "{% url 'cart_delete' %}",
+        data: {
+            product_id: $(this).data("index"),
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            action: "post"
+        },
+
+        success: function(json){
+            $("#myAlert").show();
+            setTimeout(function(){
+            },500);
+            setTimeout(function() { 
+                $("#myAlert").fadeOut(); }, 1000);
+            setTimeout(function(){
+                location.reload();
+            }, 500);
+            },
+            
+
+        error: function(xhr, errmsg, err){
+
+        }
+    });
+})
+    
+</script>
+
+{% endblock %}
