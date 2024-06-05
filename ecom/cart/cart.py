@@ -1,10 +1,11 @@
 
-from store.models import Product
+from store.models import Product, Profile
 
 
 class Cart():
     def __init__(self, request):
         self.session = request.session
+        self.request = request
 
         cart = self.session.get("session_key")
 
@@ -29,6 +30,23 @@ class Cart():
                         total = total + (product.price * value)
         return total
 
+    def db_add(self, product, quantity):
+        product_id = str(product)
+        product_quantity = str(quantity)
+
+        if product_id in self.cart:
+            pass
+        else:
+            self.cart[product_id] = int(product_quantity)
+
+        self.session.modified = True
+
+        if self.request.user.is_authenticated:
+            current_user = Profile.objects.filter(user__id=self.request.user.id)
+            cart_item = str(self.cart)
+            cart_item = cart_item.replace("\'", "\"")
+            current_user.update(old_cart=cart_item)
+
 
     def add(self, product, quantity):
         product_id = str(product.id)
@@ -40,6 +58,12 @@ class Cart():
             self.cart[product_id] = int(product_quantity)
 
         self.session.modified = True
+
+        if self.request.user.is_authenticated:
+            current_user = Profile.objects.filter(user__id=self.request.user.id)
+            cart_item = str(self.cart)
+            cart_item = cart_item.replace("\'", "\"")
+            current_user.update(old_cart=cart_item)
 
     def __len__(self):
         return len(self.cart)
@@ -62,8 +86,13 @@ class Cart():
 
         self.session.modified = True
 
-        new_cart = self.cart
+        if self.request.user.is_authenticated:
+            current_user = Profile.objects.filter(user__id=self.request.user.id)
+            cart_item = str(self.cart)
+            cart_item = cart_item.replace("\'", "\"")
+            current_user.update(old_cart=cart_item)
 
+        new_cart = self.cart
         return new_cart
     
     def delete(self, product):
@@ -72,3 +101,9 @@ class Cart():
             del self.cart[product_id]
 
         self.session.modified = True
+
+        if self.request.user.is_authenticated:
+            current_user = Profile.objects.filter(user__id=self.request.user.id)
+            cart_item = str(self.cart)
+            cart_item = cart_item.replace("\'", "\"")
+            current_user.update(old_cart=cart_item)
