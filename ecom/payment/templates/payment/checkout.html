@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Checkout</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Review Your Order</p>
+        </div>
+    </div>
+</header>
+<br><br>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <br><br>
+            <div class="card">
+                <div class="card-header fw-bolder">
+                  Order Summary
+                </div>
+                <div class="card-body">
+                    {% for product in products %}
+                    <p>{{ product.name }}</p>
+                        {% if product.is_sale %}
+                            <p class="text-danger my-2"><strike>${{ product.price }}</strike></p><p>{{ product.sale_price }}</p>
+                        {% else %}
+                            <p>{{ product.price }}</p>
+                        {% endif %}
+
+                        
+                        {% for key, value in quantities.items %}
+                            {% if key == product.id|slugify %}
+                                <p>
+                                    {{ value }}
+                                </p>
+                            {% endif %}
+                        {% endfor %}
+
+                    {% endfor %}
+                    <div class="text-end">
+                        <h4>Total: $ {{ totals }}</h4>
+                        <br>
+                        <a href="{% url 'cart_summary' %}" class="btn btn-outline-secondary" align="right">Back To Cart</a>
+                    </div>
+                </div>
+            </div>
+            <br><br>
+            <form method="post" action="{% url 'billing_info' %}">
+                <div class="card">
+                    <div class="card-header fw-bolder">Shipping Info
+                    </div>
+                    <div class="card-body">
+                            {% csrf_token %}
+                            {{ shipping_form.as_p }}
+                    </div>
+                </div>
+                    <br><br>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-success" align="right">Continue To Billing</button>
+                </div>
+                    <br><br>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
