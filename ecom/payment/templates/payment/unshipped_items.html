@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Header-->
+<header class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-dark">
+            <h1 class="display-4 fw-bolder">Unshipped Orders</h1>
+        </div>
+    </div>
+</header>
+<br><br>
+<div class="container">
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-secondary">
+          <tr>
+            <th scope="col">Order Id</th>
+            <th scope="col">Price</th>
+            <th scope="col">Order Date</th>
+            <th scope="col">Customer Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <th scope="row">
+                    <a href="{% url 'orders' order.id %}">
+                    {{ order.id }}
+                    </a>
+                </th>
+                <td>{{ order.amount_paid }}</td>
+                <td>{{ order.date_ordered }}</td>
+                <td>{{ order.full_name }}</td>
+                <td>{{ order.email }}</td>
+                <td>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="shipping_status" value="true">
+                        <input type="hidden" name="order_id" value="{{ order.id }}">
+                        <button type="submit" class="btn btn-success btn-small">Ship</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+</div>
+
+<br><br>
+<center>
+    <a class="btn btn-outline-secondary" href="{% url 'home' %}">Home</a>
+    <a class="btn btn-secondary" href="{% url 'shipped_items' %}">Shipped Orders</a>
+</center>
+<br><br>
+
+{% endblock %}

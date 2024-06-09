@@ -6,4 +6,7 @@ urlpatterns = [
     path('checkout', views.checkout, name="checkout"),
     path('billing_info', views.billing_info, name="billing_info"),
     path('process_order', views.process_order, name="process_order"),
+    path('shipped_items', views.shipped_items, name="shipped_items"),
+    path('unshipped_items', views.unshipped_items, name="unshipped_items"),
+    path('orders/<int:pk>', views.orders, name="orders"),
 ]

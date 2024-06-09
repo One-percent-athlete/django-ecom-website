@@ -43,8 +43,6 @@ def cart_update(request):
 
         response = JsonResponse({"qty": product_quantity})
         return response
-        # return redirect("cart_summary")
-    
 
 def cart_delete(request):
     cart = Cart(request)

@@ -13,8 +13,7 @@
 <br><br>
 <div class="container">
     <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <br><br>
+        <div class="col-md-6 offset-md-3"> 
             <div class="card">
                 <div class="card-header fw-bolder">
                   Order Summary
@@ -46,6 +45,59 @@
                 </div>
             </div>
             <br><br>
+            <br>
+            <h4>Order Summary</h4>
+            <br>
+            <div class="card table-responsive">
+                <div class="card-header m-0 p-0">   
+                    <table class="table table-striped">
+                        <tr class="table-secondary">
+                            <td class="fw-bolder">Product</td>
+                            <td class="fw-bolder" align="right">Quantity</td>
+                            <td class="fw-bolder" align="right">Price</td>
+                        </tr>
+                  <!-- Order Summary -->
+                </div>
+                
+                    <div class="card-body p-0">
+                        {% for product in products %}
+                            <tr class="table-light">
+                                <td>{{ product.name }}</td>
+                                {% if product.is_sale %}
+        
+                                    {% for key, value in quantities.items %}
+                                        {% if key == product.id|slugify %}
+                                        <td align="right">{{ value  }}</td>
+                                        {% endif %}
+                                    {% endfor %}
+            
+                                    <td align="right">{{ product.sale_price }}</td>
+                                {% else %}
+                                    {% for key, value in quantities.items %}
+                                        {% if key == product.id|slugify %}
+                                        <td align="right">{{ value  }}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <td align="right">${{ product.price }}</td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                    </table>
+                    <br>
+                    <div class="text-end mx-3">
+                        <h4 class="my-0">Total: $ {{ totals }}</h4>
+                        <br>
+                        <a href="{% url 'cart_summary' %}" class="btn btn-outline-secondary mb-3" align="right">Back To Cart</a>
+                        <br>
+                    </div>
+                </div>
+                        </div>
+                            <div class="text-end">
+                                <br>
+                                
+                            </div>
+            <br><br>
+            
             <form method="post" action="{% url 'billing_info' %}">
                 <div class="card">
                     <div class="card-header fw-bolder">Shipping Info

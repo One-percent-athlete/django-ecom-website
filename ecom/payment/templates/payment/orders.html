@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container col-md-8"> 
+    <br>
+    <h4>Order - {{ pk }} -  Total: ${{ order.amount_paid }}</h4>
+    <br>
+        <div class="card table-responsive">
+            <div class="card-header m-0 p-0">   
+                <table class="table table-striped">
+                    <tr class="table-secondary">
+                        <td class="fw-bolder">Customer Name</td>
+                        <td class="fw-bolder">Email</td>
+                        <td class="fw-bolder">Address</td>
+                        <td class="fw-bolder">Order Date</td>
+                        <td class="fw-bolder">Shipped</td>
+                    
+                    </tr>
+                <!-- Order Summary -->
+            </div>
+                <div class="card-body p-0">
+                        <tr class="table-light">
+                            <td>{{ order.full_name }}</td>
+                            <td>{{ order.email }}</td>
+                            <td>{{ order.shipping_address }}</td>
+                            <td>{{ order.date_ordered }}</td>
+                            <td>{{ order.shipped }}</td>
+                        </tr>
+                </table>
+                <br>
+                <center>
+
+                    {% for item in items %}
+                        <h6 class="px-5">Product :  {{ item.product }} *  {{ item.quantity }}  Price :  $ {{ item.price }}</h6>
+                    <br>
+                    {% endfor %}
+                </center>
+                <div class="text-end mx-3">
+                    {% if not order.shipped %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="shipping_status" value="true">
+                        <button type="submit" class="btn btn-success">Mark As Shipped</button>
+                    </form>
+                    {% else %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="shipping_status" value="false">
+                        <button type="submit" class="btn btn-danger">Mark As Unshipped</button>
+                    </form>
+                    {% endif %}
+                    <br>
+
+                    </div>
+                    </div>
+                    </div>
+                    <div class="text-end">
+                        <br>
+                        <a href="{% url 'shipped_items' %}" class="btn btn-secondary mb-3" align="right">Shipped Orders</a>
+                        <a href="{% url 'unshipped_items' %}" class="btn btn-secondary mb-3" align="right">Unshipped Orders</a>
+                        <br>
+                        
+                    </div>
+    <br><br>
+</div>
+
+
+
+{% endblock %}
