@@ -23,7 +23,7 @@ class ShippingAddress(models.Model):
         verbose_name_plural = "Shipping Address"
     
     def __str__(self):
-        return f"Shipping Address - {str(self.id)}"
+        return f"{str(self.id)}"
     
 def create_shipping(sender, instance, created, **kwargs):
     if created:
